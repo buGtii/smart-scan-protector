@@ -98,7 +98,14 @@ export default function History() {
             <div className={`text-xs font-bold ${colors[r.verdict] || ""}`}>{r.verdict}</div>
             <div className="text-xs font-mono text-muted-foreground">{r.risk_score}</div>
             <button
-              title="Download report"
+              title="Download PDF report"
+              onClick={() => { exportSingleScanPdf(r); toast.success("PDF saved"); }}
+              className="p-1 rounded hover:bg-secondary/60 text-muted-foreground hover:text-primary"
+            >
+              <FileDown className="h-3.5 w-3.5" />
+            </button>
+            <button
+              title="Download JSON"
               onClick={() => downloadBlob(
                 `scan-${r.scan_type}-${r.id.slice(0,8)}.json`,
                 JSON.stringify(r, null, 2),
