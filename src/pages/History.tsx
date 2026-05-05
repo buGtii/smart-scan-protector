@@ -1,7 +1,26 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { History as HistoryIcon, ExternalLink } from "lucide-react";
+import { History as HistoryIcon, ExternalLink, Download, FileJson, FileText } from "lucide-react";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
+function downloadBlob(filename: string, data: string, mime: string) {
+  const blob = new Blob([data], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function toCSV(rows: any[]) {
+  const headers = ["created_at", "scan_type", "target", "verdict", "risk_score", "blockchain_tx"];
+  const esc = (v: any) => {
+    const s = v == null ? "" : String(v);
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  return [headers.join(","), ...rows.map(r => headers.map(h => esc(r[h])).join(","))].join("\n");
+}
 
 export default function History() {
   const [rows, setRows] = useState<any[]>([]);
@@ -16,11 +35,34 @@ export default function History() {
     safe: "text-success", suspicious: "text-warning", malicious: "text-destructive", unknown: "text-muted-foreground",
   };
 
+  function exportJSON() {
+    if (!rows.length) return toast.error("No scans to export");
+    downloadBlob(`cybersmart-scans-${Date.now()}.json`, JSON.stringify(rows, null, 2), "application/json");
+    toast.success("Exported JSON");
+  }
+  function exportCSV() {
+    if (!rows.length) return toast.error("No scans to export");
+    downloadBlob(`cybersmart-scans-${Date.now()}.csv`, toCSV(rows), "text/csv");
+    toast.success("Exported CSV");
+  }
+
   return (
     <div className="space-y-4">
       <header>
-        <div className="flex items-center gap-2 mb-2"><HistoryIcon className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-bold">Scan History</h2></div>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <HistoryIcon className="h-5 w-5 text-primary" />
+            <h2 className="text-xl font-bold">Scan History</h2>
+          </div>
+          <div className="flex gap-1">
+            <Button size="sm" variant="outline" onClick={exportCSV} className="h-8 px-2">
+              <FileText className="h-3.5 w-3.5 mr-1" /> CSV
+            </Button>
+            <Button size="sm" variant="outline" onClick={exportJSON} className="h-8 px-2">
+              <FileJson className="h-3.5 w-3.5 mr-1" /> JSON
+            </Button>
+          </div>
+        </div>
         <p className="text-sm text-muted-foreground">Blockchain-anchored ledger of your scans.</p>
       </header>
 
@@ -48,6 +90,17 @@ export default function History() {
             </div>
             <div className={`text-xs font-bold ${colors[r.verdict] || ""}`}>{r.verdict}</div>
             <div className="text-xs font-mono text-muted-foreground">{r.risk_score}</div>
+            <button
+              title="Download report"
+              onClick={() => downloadBlob(
+                `scan-${r.scan_type}-${r.id.slice(0,8)}.json`,
+                JSON.stringify(r, null, 2),
+                "application/json"
+              )}
+              className="p-1 rounded hover:bg-secondary/60 text-muted-foreground hover:text-primary"
+            >
+              <Download className="h-3.5 w-3.5" />
+            </button>
           </motion.div>
         ))}
       </div>
