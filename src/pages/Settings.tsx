@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { getCfg, setCfg, connectWallet, readMockLedger } from "@/lib/blockchain";
+import { getCfg, setCfg, connectWallet, readMockLedger, getChainStatus, type ChainStatus } from "@/lib/blockchain";
 import { getPrefs, setPrefs, type ScanPrefs } from "@/lib/prefs";
-import { Settings as SettingsIcon, Wallet, Shield, Sparkles, Link2 } from "lucide-react";
+import { Settings as SettingsIcon, Wallet, Shield, Sparkles, Link2, CheckCircle2, AlertTriangle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Settings() {
