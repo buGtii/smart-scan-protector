@@ -12,6 +12,12 @@ export default function Settings() {
   const [cfg, setCfgState] = useState(getCfg());
   const [prefs, setPrefsState] = useState<ScanPrefs>(getPrefs());
   const [addr, setAddr] = useState<string | null>(null);
+  const [status, setStatus] = useState<ChainStatus | null>(null);
+
+  async function refreshStatus() {
+    setStatus(await getChainStatus());
+  }
+  useEffect(() => { refreshStatus(); }, [cfg.realMode, cfg.contractAddress]);
 
   function saveCfg(next = cfg) {
     setCfg(next); setCfgState(next); toast.success("Saved");
@@ -24,6 +30,7 @@ export default function Settings() {
       const { address } = await connectWallet();
       setAddr(address);
       toast.success("Wallet connected");
+      refreshStatus();
     } catch (e: any) { toast.error(e.message); }
   }
 
