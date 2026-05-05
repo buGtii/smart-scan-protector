@@ -2,6 +2,8 @@ import { NavLink, useLocation } from "react-router-dom";
 import { Shield, Link2, MessageSquare, FileSearch, Globe, History, Settings, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { getChainStatus, type ChainStatus } from "@/lib/blockchain";
 
 const tabs = [
   { to: "/", icon: Shield, label: "Home" },
