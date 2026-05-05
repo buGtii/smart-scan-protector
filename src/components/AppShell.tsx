@@ -17,6 +17,12 @@ const tabs = [
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, signOut } = useAuth();
   const loc = useLocation();
+  const [chain, setChain] = useState<ChainStatus | null>(null);
+  useEffect(() => {
+    getChainStatus().then(setChain);
+    const t = setInterval(() => getChainStatus().then(setChain), 15000);
+    return () => clearInterval(t);
+  }, [loc.pathname]);
   return (
     <div className="min-h-screen flex flex-col text-foreground">
       <header className="glass sticky top-0 z-30 px-4 py-3 flex items-center justify-between">
