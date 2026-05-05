@@ -9,14 +9,16 @@ function isValidIP(ip: string) {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
-    const { ip } = await req.json();
+    const body = await req.json();
+    const { ip, _prefs } = body || {};
+    const prefs = { useVirusTotal: true, ..._prefs };
     if (!ip || !isValidIP(ip)) {
       return new Response(JSON.stringify({ error: "valid ip required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
     let stats: any = null;
     let country: string | null = null;
     let asn: string | null = null;
-    if (VT) {
+    if (VT && prefs.useVirusTotal) {
       const r = await fetch(`https://www.virustotal.com/api/v3/ip_addresses/${ip}`, { headers: { "x-apikey": VT } });
       if (r.ok) {
         const d = await r.json();
