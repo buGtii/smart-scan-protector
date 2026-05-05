@@ -5,13 +5,15 @@ const VT = Deno.env.get("VIRUSTOTAL_API_KEY");
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
-    const { sha256, filename } = await req.json();
+    const body = await req.json();
+    const { sha256, filename, _prefs } = body || {};
+    const prefs = { useVirusTotal: true, ..._prefs };
     if (!sha256 || typeof sha256 !== "string" || sha256.length !== 64) {
       return new Response(JSON.stringify({ error: "valid sha256 required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
     let stats: any = null;
     let typeDesc: string | null = null;
-    if (VT) {
+    if (VT && prefs.useVirusTotal) {
       const r = await fetch(`https://www.virustotal.com/api/v3/files/${sha256}`, { headers: { "x-apikey": VT } });
       if (r.ok) {
         const d = await r.json();
