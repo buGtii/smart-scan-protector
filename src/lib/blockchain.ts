@@ -21,6 +21,8 @@ export type LogEntry = {
 const LS_KEY = "cybersmart.mockLedger";
 const CFG_KEY = "cybersmart.blockchainCfg";
 
+export const BC_KEYS = { LS_KEY, CFG_KEY };
+
 export type BlockchainCfg = {
   realMode: boolean;
   contractAddress: string;
@@ -30,7 +32,43 @@ export function getCfg(): BlockchainCfg {
   try { return JSON.parse(localStorage.getItem(CFG_KEY) || "") as BlockchainCfg; }
   catch { return { realMode: false, contractAddress: "" }; }
 }
-export function setCfg(c: BlockchainCfg) { localStorage.setItem(CFG_KEY, JSON.stringify(c)); }
+export function setCfg(c: BlockchainCfg) {
+  // Lazy import to avoid circular dependency at module init
+  import("@/lib/storage").then(m => m.kvSet(CFG_KEY, JSON.stringify(c)));
+}
+
+export type ChainStatus = {
+  mode: "real" | "mock";
+  ready: boolean;
+  reason?: string;
+  walletAddress?: string;
+  network?: string;
+  contract?: string;
+};
+
+export async function getChainStatus(): Promise<ChainStatus> {
+  const cfg = getCfg();
+  if (!cfg.realMode) return { mode: "mock", ready: true, reason: "Local mock ledger" };
+  if (!cfg.contractAddress) return { mode: "real", ready: false, reason: "No contract address set" };
+  const eth = (window as any).ethereum;
+  if (!eth) return { mode: "real", ready: false, reason: "MetaMask not detected", contract: cfg.contractAddress };
+  try {
+    const provider = new ethers.BrowserProvider(eth);
+    const accounts: string[] = await eth.request({ method: "eth_accounts" });
+    if (!accounts?.length) return { mode: "real", ready: false, reason: "Wallet not connected", contract: cfg.contractAddress };
+    const net = await provider.getNetwork();
+    const networkName = net.chainId === 11155111n ? "Sepolia" : `Chain ${net.chainId}`;
+    const ok = net.chainId === 11155111n;
+    return {
+      mode: "real", ready: ok,
+      reason: ok ? "Connected to Sepolia" : "Wrong network — switch to Sepolia",
+      walletAddress: accounts[0], network: networkName, contract: cfg.contractAddress,
+    };
+  } catch (e: any) {
+    return { mode: "real", ready: false, reason: e?.message || "Wallet error", contract: cfg.contractAddress };
+  }
+}
+
 
 async function sha256Hex(input: string) {
   const buf = new TextEncoder().encode(input);
