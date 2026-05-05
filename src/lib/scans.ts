@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { logToChain } from "@/lib/blockchain";
+import { getPrefs } from "@/lib/prefs";
 
 export type ScanType = "url" | "ip" | "file" | "message";
 export type Verdict = "safe" | "suspicious" | "malicious" | "unknown";
@@ -11,7 +12,10 @@ export async function runScan(type: ScanType, payload: any) {
     file: "scan-file",
     message: "analyze-message",
   };
-  const { data, error } = await supabase.functions.invoke(fnMap[type], { body: payload });
+  const prefs = getPrefs();
+  const { data, error } = await supabase.functions.invoke(fnMap[type], {
+    body: { ...payload, _prefs: prefs },
+  });
   if (error) throw new Error(error.message);
   if (data?.error) throw new Error(data.error);
   return data;
