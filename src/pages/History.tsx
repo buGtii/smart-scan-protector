@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { History as HistoryIcon, ExternalLink, Download, FileJson, FileText } from "lucide-react";
+import { History as HistoryIcon, ExternalLink, Download, FileJson, FileText, FileDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { exportHistoryPdf, exportSingleScanPdf } from "@/lib/pdf";
 
 function downloadBlob(filename: string, data: string, mime: string) {
   const blob = new Blob([data], { type: mime });
