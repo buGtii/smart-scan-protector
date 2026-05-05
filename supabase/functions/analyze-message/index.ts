@@ -5,12 +5,11 @@ const KEY = Deno.env.get("LOVABLE_API_KEY");
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
-    const { message } = await req.json();
+    const body = await req.json();
+    const { message, _prefs } = body || {};
+    const prefs = { useGemini: true, ..._prefs };
     if (!message || typeof message !== "string" || message.length > 5000) {
       return new Response(JSON.stringify({ error: "message required (<=5000 chars)" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    }
-    if (!KEY) {
-      return new Response(JSON.stringify({ error: "AI not configured" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     // Local heuristics: extract URLs
@@ -19,6 +18,17 @@ Deno.serve(async (req) => {
     if (/urgent|verify|suspended|locked|click here|act now/i.test(message)) localFlags.push("Urgency language");
     if (/password|otp|cvv|ssn|social security/i.test(message)) localFlags.push("Requests sensitive info");
     if (/won|prize|lottery|congratulations/i.test(message)) localFlags.push("Prize/lottery bait");
+
+    if (!prefs.useGemini || !KEY) {
+      const score = Math.min(100, localFlags.length * 30 + urls.length * 10);
+      const verdict = score >= 70 ? "malicious" : score >= 40 ? "suspicious" : "safe";
+      return new Response(JSON.stringify({
+        verdict, risk_score: score, category: "other",
+        red_flags: localFlags, urls_found: urls, local_flags: localFlags,
+        explanation: "Heuristic-only analysis (Gemini disabled).",
+        recommendation: "Enable Gemini in Settings for deeper analysis.",
+      }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
 
     const sys = `You are CyberSmart's AI security analyst. Analyze the message for phishing, scam, smishing, or social engineering. Respond ONLY with valid JSON matching this schema:
 {
