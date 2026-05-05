@@ -1,17 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { getCfg, setCfg, connectWallet, readMockLedger } from "@/lib/blockchain";
+import { getCfg, setCfg, connectWallet, readMockLedger, getChainStatus, type ChainStatus } from "@/lib/blockchain";
 import { getPrefs, setPrefs, type ScanPrefs } from "@/lib/prefs";
-import { Settings as SettingsIcon, Wallet, Shield, Sparkles, Link2 } from "lucide-react";
+import { Settings as SettingsIcon, Wallet, Shield, Sparkles, Link2, CheckCircle2, AlertTriangle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Settings() {
   const [cfg, setCfgState] = useState(getCfg());
   const [prefs, setPrefsState] = useState<ScanPrefs>(getPrefs());
   const [addr, setAddr] = useState<string | null>(null);
+  const [status, setStatus] = useState<ChainStatus | null>(null);
+
+  async function refreshStatus() {
+    setStatus(await getChainStatus());
+  }
+  useEffect(() => { refreshStatus(); }, [cfg.realMode, cfg.contractAddress]);
 
   function saveCfg(next = cfg) {
     setCfg(next); setCfgState(next); toast.success("Saved");
@@ -24,6 +30,7 @@ export default function Settings() {
       const { address } = await connectWallet();
       setAddr(address);
       toast.success("Wallet connected");
+      refreshStatus();
     } catch (e: any) { toast.error(e.message); }
   }
 
@@ -71,10 +78,36 @@ export default function Settings() {
 
       {/* Blockchain */}
       <section className="glass rounded-2xl p-4 space-y-4">
-        <div className="flex items-center gap-2">
-          <Link2 className="h-4 w-4 text-primary" />
-          <h3 className="font-semibold">Blockchain Logging</h3>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Link2 className="h-4 w-4 text-primary" />
+            <h3 className="font-semibold">Blockchain Logging</h3>
+          </div>
+          <button onClick={refreshStatus} className="p-1.5 rounded hover:bg-secondary/60" title="Refresh status">
+            <RefreshCw className="h-3.5 w-3.5 text-muted-foreground" />
+          </button>
         </div>
+        {status && (
+          <div className={`flex items-start gap-2 rounded-lg p-2.5 text-xs ${
+            status.ready ? "bg-success/10 text-success" : "bg-warning/10 text-warning"
+          }`}>
+            {status.ready
+              ? <CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0" />
+              : <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />}
+            <div className="flex-1 min-w-0">
+              <div className="font-semibold">
+                {status.mode === "real" ? "On-chain mode" : "Mock ledger mode"}
+                {status.network && <span className="ml-1 opacity-70">· {status.network}</span>}
+              </div>
+              <div className="opacity-80">{status.reason}</div>
+              {status.walletAddress && (
+                <div className="font-mono text-[10px] opacity-70 truncate">
+                  {status.walletAddress}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         <div className="flex items-center justify-between">
           <div>
             <Label className="text-base">Real blockchain mode</Label>

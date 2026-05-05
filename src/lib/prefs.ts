@@ -1,4 +1,5 @@
-// User scanner preferences (stored locally)
+import { kvSet } from "@/lib/storage";
+
 const KEY = "cybersmart.prefs";
 
 export type ScanPrefs = {
@@ -8,10 +9,13 @@ export type ScanPrefs = {
 
 const DEFAULTS: ScanPrefs = { useVirusTotal: true, useGemini: true };
 
+export const PREFS_KEY = KEY;
+
 export function getPrefs(): ScanPrefs {
   try { return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(KEY) || "{}") }; }
   catch { return DEFAULTS; }
 }
+
 export function setPrefs(p: ScanPrefs) {
-  localStorage.setItem(KEY, JSON.stringify(p));
+  void kvSet(KEY, JSON.stringify(p));
 }

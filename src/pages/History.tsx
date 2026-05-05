@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { History as HistoryIcon, ExternalLink, Download, FileJson, FileText } from "lucide-react";
+import { History as HistoryIcon, ExternalLink, Download, FileJson, FileText, FileDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { exportHistoryPdf, exportSingleScanPdf } from "@/lib/pdf";
 
 function downloadBlob(filename: string, data: string, mime: string) {
   const blob = new Blob([data], { type: mime });
@@ -55,6 +56,12 @@ export default function History() {
             <h2 className="text-xl font-bold">Scan History</h2>
           </div>
           <div className="flex gap-1">
+            <Button size="sm" variant="outline" onClick={() => {
+              if (!rows.length) return toast.error("No scans to export");
+              exportHistoryPdf(rows); toast.success("Exported PDF");
+            }} className="h-8 px-2">
+              <FileDown className="h-3.5 w-3.5 mr-1" /> PDF
+            </Button>
             <Button size="sm" variant="outline" onClick={exportCSV} className="h-8 px-2">
               <FileText className="h-3.5 w-3.5 mr-1" /> CSV
             </Button>
@@ -91,7 +98,14 @@ export default function History() {
             <div className={`text-xs font-bold ${colors[r.verdict] || ""}`}>{r.verdict}</div>
             <div className="text-xs font-mono text-muted-foreground">{r.risk_score}</div>
             <button
-              title="Download report"
+              title="Download PDF report"
+              onClick={() => { exportSingleScanPdf(r); toast.success("PDF saved"); }}
+              className="p-1 rounded hover:bg-secondary/60 text-muted-foreground hover:text-primary"
+            >
+              <FileDown className="h-3.5 w-3.5" />
+            </button>
+            <button
+              title="Download JSON"
               onClick={() => downloadBlob(
                 `scan-${r.scan_type}-${r.id.slice(0,8)}.json`,
                 JSON.stringify(r, null, 2),

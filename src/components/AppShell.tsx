@@ -2,6 +2,8 @@ import { NavLink, useLocation } from "react-router-dom";
 import { Shield, Link2, MessageSquare, FileSearch, Globe, History, Settings, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { getChainStatus, type ChainStatus } from "@/lib/blockchain";
 
 const tabs = [
   { to: "/", icon: Shield, label: "Home" },
@@ -15,6 +17,12 @@ const tabs = [
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, signOut } = useAuth();
   const loc = useLocation();
+  const [chain, setChain] = useState<ChainStatus | null>(null);
+  useEffect(() => {
+    getChainStatus().then(setChain);
+    const t = setInterval(() => getChainStatus().then(setChain), 15000);
+    return () => clearInterval(t);
+  }, [loc.pathname]);
   return (
     <div className="min-h-screen flex flex-col text-foreground">
       <header className="glass sticky top-0 z-30 px-4 py-3 flex items-center justify-between">
@@ -28,6 +36,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          {chain && (
+            <NavLink
+              to="/settings"
+              title={chain.reason}
+              className={`hidden sm:flex items-center gap-1 text-[10px] font-mono px-2 py-1 rounded-full ${
+                chain.ready
+                  ? "bg-success/15 text-success"
+                  : "bg-warning/15 text-warning"
+              }`}
+            >
+              <span className={`h-1.5 w-1.5 rounded-full ${chain.ready ? "bg-success" : "bg-warning"} animate-pulse`} />
+              {chain.mode === "real" ? "ON-CHAIN" : "MOCK"}
+            </NavLink>
+          )}
           <NavLink to="/settings" className="p-2 rounded-lg hover:bg-secondary/60">
             <Settings className="h-4 w-4 text-muted-foreground" />
           </NavLink>
