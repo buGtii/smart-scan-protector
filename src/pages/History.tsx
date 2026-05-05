@@ -56,6 +56,12 @@ export default function History() {
             <h2 className="text-xl font-bold">Scan History</h2>
           </div>
           <div className="flex gap-1">
+            <Button size="sm" variant="outline" onClick={() => {
+              if (!rows.length) return toast.error("No scans to export");
+              exportHistoryPdf(rows); toast.success("Exported PDF");
+            }} className="h-8 px-2">
+              <FileDown className="h-3.5 w-3.5 mr-1" /> PDF
+            </Button>
             <Button size="sm" variant="outline" onClick={exportCSV} className="h-8 px-2">
               <FileText className="h-3.5 w-3.5 mr-1" /> CSV
             </Button>
