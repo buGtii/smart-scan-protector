@@ -78,19 +78,21 @@ Respond with plain text, no markdown.`;
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
-    const { url } = await req.json();
+    const body = await req.json();
+    const { url, _prefs } = body || {};
+    const prefs = { useVirusTotal: true, useGemini: true, ..._prefs };
     if (!url || typeof url !== "string") {
       return new Response(JSON.stringify({ error: "url required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
     const heuristics = urlHeuristics(url);
-    const vt = await virustotalUrl(url);
+    const vt = prefs.useVirusTotal ? await virustotalUrl(url) : null;
     let score = heuristics.score;
     if (vt) {
       score += (vt.malicious || 0) * 15 + (vt.suspicious || 0) * 5;
     }
     score = Math.min(100, score);
     const verdict = score >= 70 ? "malicious" : score >= 40 ? "suspicious" : score >= 15 ? "unknown" : "safe";
-    const ai = await geminiAnalysis(url, heuristics, vt);
+    const ai = prefs.useGemini ? await geminiAnalysis(url, heuristics, vt) : null;
     return new Response(JSON.stringify({
       verdict, risk_score: score,
       heuristics, virustotal: vt, ai_analysis: ai,
