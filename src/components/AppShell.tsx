@@ -69,7 +69,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main className="flex-1 p-4 pb-24 max-w-2xl w-full mx-auto">
+      <main
+        className="flex-1 p-4 max-w-2xl w-full mx-auto"
+        style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 6rem)" }}
+      >
         <motion.div
           key={loc.pathname}
           initial={{ opacity: 0, y: 8 }}
@@ -78,7 +81,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         >{children}</motion.div>
       </main>
 
-      <nav className="fixed bottom-0 inset-x-0 glass border-t border-primary/20 z-30">
+      <nav
+        className="fixed bottom-0 inset-x-0 glass border-t border-primary/20 z-30"
+        style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+      >
         <div className="max-w-2xl mx-auto grid grid-cols-6">
           {tabs.map(t => {
             const Icon = t.icon;
