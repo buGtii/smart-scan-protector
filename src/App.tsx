@@ -35,7 +35,17 @@ import ScamStory from "./pages/ScamStory";
 import IocHunter from "./pages/IocHunter";
 import YaraBuilder from "./pages/YaraBuilder";
 import ThreatFeeds from "./pages/ThreatFeeds";
+import SafeLink from "./pages/SafeLink";
 import NotFound from "./pages/NotFound.tsx";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { installLinkGuard } from "@/lib/linkGuard";
+
+function LinkGuardBridge() {
+  const nav = useNavigate();
+  useEffect(() => installLinkGuard(nav), [nav]);
+  return null;
+}
 
 const qc = new QueryClient();
 
@@ -52,6 +62,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <LinkGuardBridge />
         <Routes>
           <Route path="/auth" element={<Auth />} />
           <Route path="/" element={<Protected><Home /></Protected>} />
@@ -82,6 +93,7 @@ const App = () => (
           <Route path="/ioc-hunter" element={<Protected><IocHunter /></Protected>} />
           <Route path="/yara" element={<Protected><YaraBuilder /></Protected>} />
           <Route path="/threat-feeds" element={<Protected><ThreatFeeds /></Protected>} />
+          <Route path="/safe-link" element={<Protected><SafeLink /></Protected>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

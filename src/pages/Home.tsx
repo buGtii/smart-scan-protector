@@ -45,6 +45,22 @@ export default function Home() {
         </div>
       </motion.section>
 
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+        <Link to="/safe-link"
+          className="block glass rounded-2xl p-4 border border-primary/40 bg-gradient-to-r from-primary/15 to-accent/10 hover:ring-2 hover:ring-primary/50 transition-all">
+          <div className="flex items-center gap-3">
+            <div className="h-11 w-11 rounded-xl gradient-cyber grid place-items-center glow shrink-0">
+              <ShieldCheck className="h-6 w-6 text-background" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="font-bold">Safe Link Guard</div>
+              <div className="text-xs text-muted-foreground">Scan any link before opening — share or paste here.</div>
+            </div>
+            <span className="text-[10px] font-mono text-primary">OPEN →</span>
+          </div>
+        </Link>
+      </motion.div>
+
       <section className="grid grid-cols-2 gap-3">
         {cards.map((c, i) => {
           const Icon = c.icon;
