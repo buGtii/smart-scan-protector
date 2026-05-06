@@ -73,6 +73,7 @@ export default function MessageScan() {
               </ul>
             </div>
           )}
+          <MitreMapping techniques={result.mitre_techniques} />
         </motion.div>
       )}
     </div>
