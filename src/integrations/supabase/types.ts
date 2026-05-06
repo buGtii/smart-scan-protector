@@ -14,6 +14,68 @@ export type Database = {
   }
   public: {
     Tables: {
+      copilot_conversations: {
+        Row: {
+          created_at: string
+          id: string
+          mode: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mode?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mode?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      copilot_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "copilot_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "copilot_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string | null
@@ -68,6 +130,80 @@ export type Database = {
           target?: string
           user_id?: string
           verdict?: string
+        }
+        Relationships: []
+      }
+      threat_report_votes: {
+        Row: {
+          created_at: string
+          id: string
+          report_id: string
+          user_id: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          report_id: string
+          user_id: string
+          value: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          report_id?: string
+          user_id?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "threat_report_votes_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "threat_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      threat_reports: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          downvotes: number
+          id: string
+          severity: string
+          status: string
+          target: string
+          threat_type: string
+          upvotes: number
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          downvotes?: number
+          id?: string
+          severity?: string
+          status?: string
+          target: string
+          threat_type: string
+          upvotes?: number
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          downvotes?: number
+          id?: string
+          severity?: string
+          status?: string
+          target?: string
+          threat_type?: string
+          upvotes?: number
+          user_id?: string
         }
         Relationships: []
       }
