@@ -20,6 +20,27 @@ const TOPICS = [
 const LEVELS: Level[] = ["beginner", "intermediate", "advanced"];
 const FEEDBACK_KEY = "learn_feedback_v1";
 
+const DAILY_TIPS = [
+  { t: "Hover before you click", b: "On desktop, hover over a link to preview the real URL. On mobile, long-press to inspect — phishers love look-alike domains like paypa1.com." },
+  { t: "Enable MFA on your email first", b: "Your email is the master key — password resets for every other account land there. Lock it down with an authenticator app, not SMS." },
+  { t: "Never approve unexpected MFA prompts", b: "MFA fatigue attacks spam approvals hoping you tap one. If you didn't initiate it, deny it and rotate your password immediately." },
+  { t: "Treat 'urgent' messages as suspicious", b: "Scammers manufacture panic to bypass your judgment. Pause, breathe, verify via a second channel before acting." },
+  { t: "Use a passphrase, not a password", b: "Four random words ('plum-tractor-violin-92') beat 'P@ssw0rd!' in both strength and memorability." },
+  { t: "Update apps weekly", b: "Most exploits target unpatched bugs that already have fixes. Auto-update is your cheapest defense." },
+  { t: "Lock SIM swap by adding a carrier PIN", b: "Call your carrier and set a port-out PIN — it stops attackers from stealing your number to bypass SMS 2FA." },
+  { t: "Verify crypto addresses character-by-character", b: "Clipboard hijackers swap addresses. Always check the first AND last 6 characters before sending." },
+  { t: "Disable link previews in unknown chats", b: "Some preview servers leak your IP and metadata. Only allow them for trusted contacts." },
+  { t: "Review app permissions monthly", b: "Flashlight apps don't need contacts. Audit Settings → Privacy and revoke anything that doesn't make sense." },
+  { t: "Back up the 3-2-1 way", b: "3 copies, 2 different media, 1 offline. Ransomware can't encrypt what it can't reach." },
+  { t: "Use unique emails per service", b: "Aliases (you+netflix@gmail.com) reveal which company leaked your address when spam starts arriving." },
+  { t: "Beware QR codes in public", b: "'Quishing' attacks paste fake QR codes over real ones (parking meters, menus). Type the URL manually when stakes are high." },
+];
+
+function dailyTip() {
+  const day = Math.floor(Date.now() / 86_400_000);
+  return DAILY_TIPS[day % DAILY_TIPS.length];
+}
+
 function loadFeedback(): Record<string, { rating: 1 | -1; note?: string }> {
   try { return JSON.parse(localStorage.getItem(FEEDBACK_KEY) || "{}"); } catch { return {}; }
 }
