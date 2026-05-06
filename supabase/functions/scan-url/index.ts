@@ -155,6 +155,7 @@ Deno.serve(async (req) => {
       red_flags: ai?.red_flags || heuristics.reasons,
       category: ai?.category || null,
       confidence: ai?.confidence ?? null,
+      mitre_techniques: ai?.mitre_techniques || [],
     }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
