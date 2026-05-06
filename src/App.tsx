@@ -27,6 +27,14 @@ import Vault from "./pages/Vault";
 import Learn from "./pages/Learn";
 import PhishingSim from "./pages/PhishingSim";
 import RiskScore from "./pages/RiskScore";
+import PasswordLab from "./pages/PasswordLab";
+import Totp from "./pages/Totp";
+import Watchlist from "./pages/Watchlist";
+import Streaks from "./pages/Streaks";
+import ScamStory from "./pages/ScamStory";
+import IocHunter from "./pages/IocHunter";
+import YaraBuilder from "./pages/YaraBuilder";
+import ThreatFeeds from "./pages/ThreatFeeds";
 import NotFound from "./pages/NotFound.tsx";
 
 const qc = new QueryClient();
@@ -66,6 +74,14 @@ const App = () => (
           <Route path="/learn" element={<Protected><Learn /></Protected>} />
           <Route path="/phishing-sim" element={<Protected><PhishingSim /></Protected>} />
           <Route path="/risk" element={<Protected><RiskScore /></Protected>} />
+          <Route path="/password-lab" element={<Protected><PasswordLab /></Protected>} />
+          <Route path="/totp" element={<Protected><Totp /></Protected>} />
+          <Route path="/watchlist" element={<Protected><Watchlist /></Protected>} />
+          <Route path="/streaks" element={<Protected><Streaks /></Protected>} />
+          <Route path="/scam-story" element={<Protected><ScamStory /></Protected>} />
+          <Route path="/ioc-hunter" element={<Protected><IocHunter /></Protected>} />
+          <Route path="/yara" element={<Protected><YaraBuilder /></Protected>} />
+          <Route path="/threat-feeds" element={<Protected><ThreatFeeds /></Protected>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

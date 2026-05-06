@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Link2, MessageSquare, FileSearch, Globe, Activity, Cpu, Sparkles, QrCode, Eye, Users, GraduationCap, Target, ShieldCheck, Lock, Mail, ShieldAlert, Coins } from "lucide-react";
+import { Link2, MessageSquare, FileSearch, Globe, Activity, Cpu, Sparkles, QrCode, Eye, Users, GraduationCap, Target, ShieldCheck, Lock, Mail, ShieldAlert, Coins, KeyRound, KeySquare, Bookmark, Flame, BookOpen, Search, FileCode, Radio } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -73,6 +73,8 @@ export default function Home() {
             { to: "/phishing-sim", icon: Target, title: "Phishing Sim", desc: "Spot the scam challenges", grad: "from-rose-500/20 to-orange-500/20" },
             { to: "/risk", icon: ShieldCheck, title: "Risk Score", desc: "Your cyber posture", grad: "from-emerald-500/20 to-cyan-500/20" },
             { to: "/copilot", icon: Sparkles, title: "AI Copilot", desc: "Ask anything", grad: "from-blue-500/20 to-indigo-500/20" },
+            { to: "/streaks", icon: Flame, title: "Streaks & XP", desc: "Daily progression", grad: "from-amber-500/20 to-red-500/20" },
+            { to: "/scam-story", icon: BookOpen, title: "Scam Story", desc: "Daily briefing", grad: "from-violet-500/20 to-fuchsia-500/20" },
           ].map((c, i) => {
             const Icon = c.icon;
             return (
@@ -103,6 +105,12 @@ export default function Home() {
             { to: "/crypto", icon: Coins, title: "Crypto Scan", desc: "Wallet risk" },
             { to: "/vault", icon: Lock, title: "Vault", desc: "Encrypted secrets" },
             { to: "/community", icon: Users, title: "Community", desc: "Threat reports" },
+            { to: "/password-lab", icon: KeyRound, title: "Password Lab", desc: "Strength + breach" },
+            { to: "/totp", icon: KeySquare, title: "2FA Codes", desc: "Encrypted authenticator" },
+            { to: "/watchlist", icon: Bookmark, title: "Watchlist", desc: "Pinned URL monitor" },
+            { to: "/ioc-hunter", icon: Search, title: "IOC Hunter", desc: "Parse logs for IOCs" },
+            { to: "/yara", icon: FileCode, title: "YARA Builder", desc: "Generate rules" },
+            { to: "/threat-feeds", icon: Radio, title: "Threat Feeds", desc: "Live indicators" },
           ].map((c, i) => {
             const Icon = c.icon;
             return (
