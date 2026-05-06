@@ -69,6 +69,7 @@ export default function UrlScan() {
               <p className="text-sm leading-relaxed">{result.ai_analysis}</p>
             </div>
           )}
+          <MitreMapping techniques={result.mitre_techniques} />
         </motion.div>
       )}
     </div>
