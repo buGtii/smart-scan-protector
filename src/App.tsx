@@ -19,6 +19,14 @@ import QRScan from "./pages/QRScan";
 import ScreenshotScan from "./pages/ScreenshotScan";
 import Community from "./pages/Community";
 import SOC from "./pages/SOC";
+import DomainIntel from "./pages/DomainIntel";
+import EmailHeaders from "./pages/EmailHeaders";
+import BreachCheck from "./pages/BreachCheck";
+import CryptoScan from "./pages/CryptoScan";
+import Vault from "./pages/Vault";
+import Learn from "./pages/Learn";
+import PhishingSim from "./pages/PhishingSim";
+import RiskScore from "./pages/RiskScore";
 import NotFound from "./pages/NotFound.tsx";
 
 const qc = new QueryClient();
@@ -50,6 +58,14 @@ const App = () => (
           <Route path="/screenshot" element={<Protected><ScreenshotScan /></Protected>} />
           <Route path="/community" element={<Protected><Community /></Protected>} />
           <Route path="/soc" element={<Protected><SOC /></Protected>} />
+          <Route path="/domain" element={<Protected><DomainIntel /></Protected>} />
+          <Route path="/email-headers" element={<Protected><EmailHeaders /></Protected>} />
+          <Route path="/breach" element={<Protected><BreachCheck /></Protected>} />
+          <Route path="/crypto" element={<Protected><CryptoScan /></Protected>} />
+          <Route path="/vault" element={<Protected><Vault /></Protected>} />
+          <Route path="/learn" element={<Protected><Learn /></Protected>} />
+          <Route path="/phishing-sim" element={<Protected><PhishingSim /></Protected>} />
+          <Route path="/risk" element={<Protected><RiskScore /></Protected>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
