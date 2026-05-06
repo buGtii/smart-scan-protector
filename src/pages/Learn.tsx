@@ -309,6 +309,86 @@ export default function Learn() {
         </button>
       </div>
 
+      {/* Daily Tip */}
+      <div className="glass rounded-2xl p-4 border border-accent/30 relative overflow-hidden">
+        <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-accent/10 blur-3xl" />
+        <div className="flex items-center gap-2 mb-1.5">
+          <Lightbulb className="h-4 w-4 text-accent" />
+          <div className="text-[10px] font-mono uppercase tracking-wider text-accent">Daily Safety Tip</div>
+          <Flame className="h-3 w-3 text-orange-400 ml-auto" />
+        </div>
+        <div className="text-sm font-bold mb-1">{tip.t}</div>
+        <div className="text-xs text-muted-foreground leading-relaxed">{tip.b}</div>
+      </div>
+
+      {/* Mastery Dashboard */}
+      <div className="glass rounded-2xl p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <Target className="h-4 w-4 text-primary" />
+          <div className="text-sm font-bold">Topic Mastery Dashboard</div>
+          <div className="ml-auto flex items-center gap-1.5">
+            <Award className="h-3.5 w-3.5 text-primary" />
+            <span className="text-xs font-mono">{overall}%</span>
+          </div>
+        </div>
+        <div className="h-2 w-full rounded-full bg-background/40 overflow-hidden mb-4">
+          <div className="h-full gradient-cyber" style={{ width: `${overall}%` }} />
+        </div>
+
+        {strengths.length > 0 && (
+          <div className="mb-3">
+            <div className="text-[10px] font-mono uppercase text-success mb-1.5 flex items-center gap-1"><TrendingUp className="h-3 w-3" /> Strengths</div>
+            <div className="space-y-1">
+              {strengths.map(s => (
+                <div key={s.topic} className="flex items-center gap-2 text-xs">
+                  <div className="flex-1 truncate">{s.topic}</div>
+                  <div className="font-mono text-success">{s.mastery}%</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {weaknesses.length > 0 && (
+          <div className="mb-3">
+            <div className="text-[10px] font-mono uppercase text-destructive mb-1.5 flex items-center gap-1"><TrendingDown className="h-3 w-3" /> Needs work</div>
+            <div className="space-y-1">
+              {weaknesses.map(s => (
+                <button key={s.topic} onClick={() => start(s.topic, recommendLevelFor(s.topic))}
+                  className="w-full flex items-center gap-2 text-xs hover:bg-background/40 rounded-lg px-1.5 py-1 transition-colors">
+                  <div className="flex-1 truncate text-left">{s.topic}</div>
+                  <div className="font-mono text-destructive">{s.mastery}%</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="text-[10px] font-mono uppercase text-muted-foreground mb-1.5">All topics</div>
+        <div className="space-y-2">
+          {topicMastery.map(tm => (
+            <div key={tm.topic}>
+              <div className="flex items-center justify-between text-xs mb-1">
+                <div className="truncate flex-1">{tm.topic}</div>
+                <div className="font-mono text-muted-foreground">{tm.mastery}%</div>
+              </div>
+              <div className="flex gap-1">
+                {tm.perLevel.map(pl => (
+                  <div key={pl.level} className="flex-1">
+                    <div className={`h-1.5 rounded-full ${
+                      pl.pct === null ? "bg-background/40" :
+                      pl.pct >= 80 ? "bg-success" :
+                      pl.pct >= 50 ? "bg-yellow-500" : "bg-destructive"
+                    }`} style={{ opacity: pl.pct === null ? 0.3 : 1 }} />
+                    <div className="text-[9px] text-muted-foreground mt-0.5 text-center">{pl.level[0].toUpperCase()}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {loading && <div className="text-center py-6"><Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" /></div>}
 
       <div className="grid gap-2">
