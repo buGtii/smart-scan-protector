@@ -14,6 +14,11 @@ import FileScan from "./pages/FileScan";
 import IpScan from "./pages/IpScan";
 import History from "./pages/History";
 import Settings from "./pages/Settings";
+import Copilot from "./pages/Copilot";
+import QRScan from "./pages/QRScan";
+import ScreenshotScan from "./pages/ScreenshotScan";
+import Community from "./pages/Community";
+import SOC from "./pages/SOC";
 import NotFound from "./pages/NotFound.tsx";
 
 const qc = new QueryClient();
@@ -40,6 +45,11 @@ const App = () => (
           <Route path="/ip" element={<Protected><IpScan /></Protected>} />
           <Route path="/history" element={<Protected><History /></Protected>} />
           <Route path="/settings" element={<Protected><Settings /></Protected>} />
+          <Route path="/copilot" element={<Protected><Copilot /></Protected>} />
+          <Route path="/qr" element={<Protected><QRScan /></Protected>} />
+          <Route path="/screenshot" element={<Protected><ScreenshotScan /></Protected>} />
+          <Route path="/community" element={<Protected><Community /></Protected>} />
+          <Route path="/soc" element={<Protected><SOC /></Protected>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
