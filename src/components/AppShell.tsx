@@ -25,7 +25,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, [loc.pathname]);
   return (
     <div className="min-h-screen flex flex-col text-foreground">
-      <header className="glass sticky top-0 z-30 px-4 py-3 flex items-center justify-between">
+      <header
+        className="glass sticky top-0 z-30 px-4 flex items-center justify-between"
+        style={{
+          paddingTop: "calc(env(safe-area-inset-top, 0px) + 0.75rem)",
+          paddingBottom: "0.75rem",
+          paddingLeft: "calc(env(safe-area-inset-left, 0px) + 1rem)",
+          paddingRight: "calc(env(safe-area-inset-right, 0px) + 1rem)",
+        }}
+      >
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-lg gradient-cyber grid place-items-center glow">
             <Shield className="h-5 w-5 text-background" />
