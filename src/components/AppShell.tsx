@@ -94,7 +94,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 to={t.to}
                 end={t.to === "/"}
                 className={({ isActive }) =>
-                  `flex flex-col items-center gap-0.5 py-3 text-[10px] font-medium transition-colors ${
+                  `flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
                     isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
                   }`
                 }
