@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { GraduationCap, BookOpen, Loader2, CheckCircle2, XCircle, Trophy, Sparkles, TrendingUp, TrendingDown, ThumbsUp, ThumbsDown, Brain } from "lucide-react";
+import { GraduationCap, BookOpen, Loader2, CheckCircle2, XCircle, Trophy, Sparkles, TrendingUp, TrendingDown, ThumbsUp, ThumbsDown, Brain, Target, Lightbulb, Flame, Award } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "@/hooks/use-toast";
 
@@ -19,6 +19,27 @@ const TOPICS = [
 
 const LEVELS: Level[] = ["beginner", "intermediate", "advanced"];
 const FEEDBACK_KEY = "learn_feedback_v1";
+
+const DAILY_TIPS = [
+  { t: "Hover before you click", b: "On desktop, hover over a link to preview the real URL. On mobile, long-press to inspect — phishers love look-alike domains like paypa1.com." },
+  { t: "Enable MFA on your email first", b: "Your email is the master key — password resets for every other account land there. Lock it down with an authenticator app, not SMS." },
+  { t: "Never approve unexpected MFA prompts", b: "MFA fatigue attacks spam approvals hoping you tap one. If you didn't initiate it, deny it and rotate your password immediately." },
+  { t: "Treat 'urgent' messages as suspicious", b: "Scammers manufacture panic to bypass your judgment. Pause, breathe, verify via a second channel before acting." },
+  { t: "Use a passphrase, not a password", b: "Four random words ('plum-tractor-violin-92') beat 'P@ssw0rd!' in both strength and memorability." },
+  { t: "Update apps weekly", b: "Most exploits target unpatched bugs that already have fixes. Auto-update is your cheapest defense." },
+  { t: "Lock SIM swap by adding a carrier PIN", b: "Call your carrier and set a port-out PIN — it stops attackers from stealing your number to bypass SMS 2FA." },
+  { t: "Verify crypto addresses character-by-character", b: "Clipboard hijackers swap addresses. Always check the first AND last 6 characters before sending." },
+  { t: "Disable link previews in unknown chats", b: "Some preview servers leak your IP and metadata. Only allow them for trusted contacts." },
+  { t: "Review app permissions monthly", b: "Flashlight apps don't need contacts. Audit Settings → Privacy and revoke anything that doesn't make sense." },
+  { t: "Back up the 3-2-1 way", b: "3 copies, 2 different media, 1 offline. Ransomware can't encrypt what it can't reach." },
+  { t: "Use unique emails per service", b: "Aliases (you+netflix@gmail.com) reveal which company leaked your address when spam starts arriving." },
+  { t: "Beware QR codes in public", b: "'Quishing' attacks paste fake QR codes over real ones (parking meters, menus). Type the URL manually when stakes are high." },
+];
+
+function dailyTip() {
+  const day = Math.floor(Date.now() / 86_400_000);
+  return DAILY_TIPS[day % DAILY_TIPS.length];
+}
 
 function loadFeedback(): Record<string, { rating: 1 | -1; note?: string }> {
   try { return JSON.parse(localStorage.getItem(FEEDBACK_KEY) || "{}"); } catch { return {}; }
@@ -232,6 +253,25 @@ export default function Learn() {
 
   const next = adaptiveNext();
   const masteredCount = progress.filter(p => p.score >= 2).length;
+  const tip = dailyTip();
+
+  // mastery: for each topic & level → score%, and overall mastery score 0-100
+  const topicMastery = TOPICS.map(t => {
+    const perLevel = LEVELS.map(l => {
+      const rec = progress.find(p => p.lesson_id === `${l}:${t}`);
+      return { level: l, pct: rec ? Math.round((rec.score / 3) * 100) : null };
+    });
+    // weighted: beginner 1x, intermediate 2x, advanced 3x
+    const weights = { beginner: 1, intermediate: 2, advanced: 3 } as const;
+    let num = 0, den = 0;
+    perLevel.forEach(p => { if (p.pct !== null) { num += p.pct * weights[p.level]; den += 100 * weights[p.level]; } });
+    const mastery = den ? Math.round((num / den) * 100) : 0;
+    return { topic: t, perLevel, mastery };
+  });
+  const sorted = [...topicMastery].sort((a, b) => b.mastery - a.mastery);
+  const strengths = sorted.filter(s => s.mastery >= 60).slice(0, 3);
+  const weaknesses = sorted.filter(s => s.mastery < 60).slice(-3).reverse();
+  const overall = topicMastery.length ? Math.round(topicMastery.reduce((s, t) => s + t.mastery, 0) / topicMastery.length) : 0;
 
   return (
     <div className="space-y-4">
@@ -267,6 +307,86 @@ export default function Learn() {
           className="w-full py-2 rounded-xl gradient-cyber text-background font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50">
           <Sparkles className="h-4 w-4" /> Start adaptive lesson
         </button>
+      </div>
+
+      {/* Daily Tip */}
+      <div className="glass rounded-2xl p-4 border border-accent/30 relative overflow-hidden">
+        <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-accent/10 blur-3xl" />
+        <div className="flex items-center gap-2 mb-1.5">
+          <Lightbulb className="h-4 w-4 text-accent" />
+          <div className="text-[10px] font-mono uppercase tracking-wider text-accent">Daily Safety Tip</div>
+          <Flame className="h-3 w-3 text-orange-400 ml-auto" />
+        </div>
+        <div className="text-sm font-bold mb-1">{tip.t}</div>
+        <div className="text-xs text-muted-foreground leading-relaxed">{tip.b}</div>
+      </div>
+
+      {/* Mastery Dashboard */}
+      <div className="glass rounded-2xl p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <Target className="h-4 w-4 text-primary" />
+          <div className="text-sm font-bold">Topic Mastery Dashboard</div>
+          <div className="ml-auto flex items-center gap-1.5">
+            <Award className="h-3.5 w-3.5 text-primary" />
+            <span className="text-xs font-mono">{overall}%</span>
+          </div>
+        </div>
+        <div className="h-2 w-full rounded-full bg-background/40 overflow-hidden mb-4">
+          <div className="h-full gradient-cyber" style={{ width: `${overall}%` }} />
+        </div>
+
+        {strengths.length > 0 && (
+          <div className="mb-3">
+            <div className="text-[10px] font-mono uppercase text-success mb-1.5 flex items-center gap-1"><TrendingUp className="h-3 w-3" /> Strengths</div>
+            <div className="space-y-1">
+              {strengths.map(s => (
+                <div key={s.topic} className="flex items-center gap-2 text-xs">
+                  <div className="flex-1 truncate">{s.topic}</div>
+                  <div className="font-mono text-success">{s.mastery}%</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {weaknesses.length > 0 && (
+          <div className="mb-3">
+            <div className="text-[10px] font-mono uppercase text-destructive mb-1.5 flex items-center gap-1"><TrendingDown className="h-3 w-3" /> Needs work</div>
+            <div className="space-y-1">
+              {weaknesses.map(s => (
+                <button key={s.topic} onClick={() => start(s.topic, recommendLevelFor(s.topic))}
+                  className="w-full flex items-center gap-2 text-xs hover:bg-background/40 rounded-lg px-1.5 py-1 transition-colors">
+                  <div className="flex-1 truncate text-left">{s.topic}</div>
+                  <div className="font-mono text-destructive">{s.mastery}%</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="text-[10px] font-mono uppercase text-muted-foreground mb-1.5">All topics</div>
+        <div className="space-y-2">
+          {topicMastery.map(tm => (
+            <div key={tm.topic}>
+              <div className="flex items-center justify-between text-xs mb-1">
+                <div className="truncate flex-1">{tm.topic}</div>
+                <div className="font-mono text-muted-foreground">{tm.mastery}%</div>
+              </div>
+              <div className="flex gap-1">
+                {tm.perLevel.map(pl => (
+                  <div key={pl.level} className="flex-1">
+                    <div className={`h-1.5 rounded-full ${
+                      pl.pct === null ? "bg-background/40" :
+                      pl.pct >= 80 ? "bg-success" :
+                      pl.pct >= 50 ? "bg-yellow-500" : "bg-destructive"
+                    }`} style={{ opacity: pl.pct === null ? 0.3 : 1 }} />
+                    <div className="text-[9px] text-muted-foreground mt-0.5 text-center">{pl.level[0].toUpperCase()}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {loading && <div className="text-center py-6"><Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" /></div>}
