@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { GraduationCap, BookOpen, Loader2, CheckCircle2, XCircle, Trophy, Sparkles, TrendingUp, TrendingDown, ThumbsUp, ThumbsDown, Brain } from "lucide-react";
+import { GraduationCap, BookOpen, Loader2, CheckCircle2, XCircle, Trophy, Sparkles, TrendingUp, TrendingDown, ThumbsUp, ThumbsDown, Brain, Target, Lightbulb, Flame, Award } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "@/hooks/use-toast";
 
