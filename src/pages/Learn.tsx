@@ -253,6 +253,25 @@ export default function Learn() {
 
   const next = adaptiveNext();
   const masteredCount = progress.filter(p => p.score >= 2).length;
+  const tip = dailyTip();
+
+  // mastery: for each topic & level → score%, and overall mastery score 0-100
+  const topicMastery = TOPICS.map(t => {
+    const perLevel = LEVELS.map(l => {
+      const rec = progress.find(p => p.lesson_id === `${l}:${t}`);
+      return { level: l, pct: rec ? Math.round((rec.score / 3) * 100) : null };
+    });
+    // weighted: beginner 1x, intermediate 2x, advanced 3x
+    const weights = { beginner: 1, intermediate: 2, advanced: 3 } as const;
+    let num = 0, den = 0;
+    perLevel.forEach(p => { if (p.pct !== null) { num += p.pct * weights[p.level]; den += 100 * weights[p.level]; } });
+    const mastery = den ? Math.round((num / den) * 100) : 0;
+    return { topic: t, perLevel, mastery };
+  });
+  const sorted = [...topicMastery].sort((a, b) => b.mastery - a.mastery);
+  const strengths = sorted.filter(s => s.mastery >= 60).slice(0, 3);
+  const weaknesses = sorted.filter(s => s.mastery < 60).slice(-3).reverse();
+  const overall = topicMastery.length ? Math.round(topicMastery.reduce((s, t) => s + t.mastery, 0) / topicMastery.length) : 0;
 
   return (
     <div className="space-y-4">
