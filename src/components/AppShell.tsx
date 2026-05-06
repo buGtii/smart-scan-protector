@@ -1,5 +1,5 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { Shield, Link2, MessageSquare, FileSearch, Globe, History, Settings, LogOut, Menu, X, Sparkles, QrCode, Eye, Users, Activity, GraduationCap, Target, Lock, Mail, ShieldAlert, Coins, ShieldCheck } from "lucide-react";
+import { Shield, Link2, MessageSquare, FileSearch, Globe, History, Settings, LogOut, Menu, X, Sparkles, QrCode, Eye, Users, Activity, GraduationCap, Target, Lock, Mail, ShieldAlert, Coins, ShieldCheck, KeyRound, KeySquare, Bookmark, Flame, BookOpen, Search, FileCode, Radio } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -28,6 +28,14 @@ const moreItems = [
   { to: "/crypto", icon: Coins, label: "Crypto Scanner", desc: "Wallet address risk" },
   { to: "/vault", icon: Lock, label: "Encrypted Vault", desc: "AES-256 secret storage" },
   { to: "/community", icon: Users, label: "Community", desc: "Shared threat intelligence" },
+  { to: "/password-lab", icon: KeyRound, label: "Password Lab", desc: "Entropy + breach analyzer" },
+  { to: "/totp", icon: KeySquare, label: "2FA Authenticator", desc: "Encrypted TOTP vault" },
+  { to: "/watchlist", icon: Bookmark, label: "URL Watchlist", desc: "Pinned domain monitoring" },
+  { to: "/streaks", icon: Flame, label: "Streaks & XP", desc: "Daily security habit tracker" },
+  { to: "/scam-story", icon: BookOpen, label: "Scam Story", desc: "Daily AI threat briefing" },
+  { to: "/ioc-hunter", icon: Search, label: "IOC Hunter", desc: "Extract indicators from logs" },
+  { to: "/yara", icon: FileCode, label: "YARA Builder", desc: "Generate detection rules" },
+  { to: "/threat-feeds", icon: Radio, label: "Threat Feeds", desc: "Live URLhaus & OpenPhish" },
   { to: "/settings", icon: Settings, label: "Settings", desc: "Preferences & blockchain" },
 ];
 
