@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { runScan, persistScan } from "@/lib/scans";
 import { VerdictBadge } from "@/components/VerdictBadge";
+import { MitreMapping } from "@/components/MitreMapping";
 import { Loader2, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -68,6 +69,7 @@ export default function UrlScan() {
               <p className="text-sm leading-relaxed">{result.ai_analysis}</p>
             </div>
           )}
+          <MitreMapping techniques={result.mitre_techniques} />
         </motion.div>
       )}
     </div>

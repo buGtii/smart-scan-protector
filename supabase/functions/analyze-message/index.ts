@@ -30,15 +30,17 @@ Deno.serve(async (req) => {
       }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    const sys = `You are CyberSmart's AI security analyst. Analyze the message for phishing, scam, smishing, or social engineering. Respond ONLY with valid JSON matching this schema:
+    const sys = `You are CyberSmart's AI security analyst and MITRE ATT&CK expert. Analyze the message for phishing, scam, smishing, or social engineering. Respond ONLY with valid JSON matching this schema:
 {
   "verdict": "safe" | "suspicious" | "malicious",
   "risk_score": number (0-100),
   "category": "phishing" | "scam" | "smishing" | "spam" | "legitimate" | "other",
   "red_flags": string[],
   "explanation": string (2-3 sentences),
-  "recommendation": string (one actionable sentence)
-}`;
+  "recommendation": string (one actionable sentence),
+  "mitre_techniques": [ { "id": "T####[.###]", "name": string, "tactic": string, "description": string, "detection": string } ]
+}
+Always include 1-4 relevant MITRE ATT&CK techniques (e.g. T1566.001 Spearphishing Attachment, T1566.002 Spearphishing Link, T1566.003 Spearphishing via Service, T1598 Phishing for Information, T1656 Impersonation) with concrete detection guidance.`;
 
     const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

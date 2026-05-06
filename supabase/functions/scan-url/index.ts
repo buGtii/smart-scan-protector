@@ -76,7 +76,7 @@ async function geminiAnalysis(url: string, heuristics: any, vt: any) {
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages: [
-          { role: "system", content: "You are a phishing-detection expert. Analyze the URL using ONLY the provided signals and return structured JSON via the tool." },
+          { role: "system", content: "You are a phishing-detection expert and MITRE ATT&CK analyst. Analyze the URL using ONLY the provided signals and return structured JSON via the tool. Always include 1-4 relevant MITRE ATT&CK techniques (e.g. T1566.002 Spearphishing Link, T1598 Phishing for Information, T1583.001 Acquire Infrastructure: Domains, T1036 Masquerading) with concrete detection recommendations." },
           { role: "user", content: `URL: ${url}\nHeuristics: ${heuristics.reasons.join("; ") || "none"}\nVirusTotal: ${vt ? JSON.stringify(vt) : "unavailable"}` },
         ],
         tools: [{
@@ -94,8 +94,24 @@ async function geminiAnalysis(url: string, heuristics: any, vt: any) {
                 explanation: { type: "string" },
                 recommendation: { type: "string" },
                 red_flags: { type: "array", items: { type: "string" } },
+                mitre_techniques: {
+                  type: "array",
+                  description: "Relevant MITRE ATT&CK techniques mapped to observed indicators.",
+                  items: {
+                    type: "object",
+                    properties: {
+                      id: { type: "string", description: "MITRE technique ID e.g. T1566.002" },
+                      name: { type: "string" },
+                      tactic: { type: "string", description: "MITRE tactic e.g. Initial Access" },
+                      description: { type: "string", description: "Why this technique applies (1 sentence)" },
+                      detection: { type: "string", description: "Recommended detection or mitigation (1 sentence)" },
+                    },
+                    required: ["id","name","tactic","description","detection"],
+                    additionalProperties: false,
+                  },
+                },
               },
-              required: ["verdict","confidence","risk_score","explanation","recommendation","red_flags"],
+              required: ["verdict","confidence","risk_score","explanation","recommendation","red_flags","mitre_techniques"],
               additionalProperties: false,
             },
           },
@@ -139,6 +155,7 @@ Deno.serve(async (req) => {
       red_flags: ai?.red_flags || heuristics.reasons,
       category: ai?.category || null,
       confidence: ai?.confidence ?? null,
+      mitre_techniques: ai?.mitre_techniques || [],
     }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });

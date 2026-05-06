@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { runScan, persistScan } from "@/lib/scans";
 import { VerdictBadge } from "@/components/VerdictBadge";
+import { MitreMapping } from "@/components/MitreMapping";
 import { Loader2, MessageSquare, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -72,6 +73,7 @@ export default function MessageScan() {
               </ul>
             </div>
           )}
+          <MitreMapping techniques={result.mitre_techniques} />
         </motion.div>
       )}
     </div>
