@@ -33,22 +33,34 @@ export default function ScamStory() {
     const t = TOPICS[Math.floor(Math.random() * TOPICS.length)];
     setTopic(t);
     try {
-      const r = await supabase.functions.invoke("copilot", {
-        body: {
-          mode: "beginner",
-          messages: [{ role: "user", content: `Write a 200-word "Scam Story of the Day" about: ${t}. Structure: 1) The hook (how victims got tricked), 2) Red flags they missed, 3) Three specific defensive actions for a regular person. Use plain language and a sober, non-sensational tone.` }],
+      const { data: { session } } = await supabase.auth.getSession();
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/copilot`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
+        body: JSON.stringify({
+          mode: "beginner",
+          messages: [{ role: "user", content: `Write a 200-word "Scam Story of the Day" about: ${t}. Structure: 1) The hook (how victims got tricked), 2) Red flags they missed, 3) Three specific defensive actions for a regular person. Use plain language, sober tone.` }],
+        }),
       });
-      // copilot streams; supabase-js returns the body. Try to read text.
-      const text = typeof r.data === "string" ? r.data : "";
-      let acc = "";
-      if (text) {
-        // parse SSE
-        for (const line of text.split("\n")) {
+      const reader = res.body?.getReader();
+      const decoder = new TextDecoder();
+      let acc = "", buf = "";
+      while (reader) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buf += decoder.decode(value, { stream: true });
+        const lines = buf.split("\n");
+        buf = lines.pop() || "";
+        for (const line of lines) {
           if (!line.startsWith("data:")) continue;
           const payload = line.slice(5).trim();
-          if (payload === "[DONE]") break;
-          try { acc += JSON.parse(payload).choices?.[0]?.delta?.content || ""; } catch {}
+          if (payload === "[DONE]") continue;
+          try { acc += JSON.parse(payload).choices?.[0]?.delta?.content || ""; setStory(acc); } catch {}
         }
       }
       const final = acc || "Could not load today's story. Tap refresh.";
