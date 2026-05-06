@@ -3,7 +3,7 @@
 const enc = new TextEncoder();
 const dec = new TextDecoder();
 
-async function deriveKey(pass: string, salt: Uint8Array) {
+async function deriveKey(pass: string, salt: BufferSource) {
   const km = await crypto.subtle.importKey("raw", enc.encode(pass), "PBKDF2", false, ["deriveKey"]);
   return crypto.subtle.deriveKey(
     { name: "PBKDF2", salt, iterations: 200_000, hash: "SHA-256" },
