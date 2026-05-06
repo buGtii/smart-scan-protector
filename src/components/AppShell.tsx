@@ -1,5 +1,5 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { Shield, Link2, MessageSquare, FileSearch, Globe, History, Settings, LogOut, Menu, X, Sparkles, QrCode, Eye, Users, Activity } from "lucide-react";
+import { Shield, Link2, MessageSquare, FileSearch, Globe, History, Settings, LogOut, Menu, X, Sparkles, QrCode, Eye, Users, Activity, GraduationCap, Target, Lock, Mail, ShieldAlert, Coins, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -16,9 +16,17 @@ const tabs = [
 
 const moreItems = [
   { to: "/copilot", icon: Sparkles, label: "AI Copilot", desc: "Conversational security expert" },
+  { to: "/learn", icon: GraduationCap, label: "Learn Cybersecurity", desc: "AI lessons + quizzes" },
+  { to: "/phishing-sim", icon: Target, label: "Phishing Simulator", desc: "Train your detection skills" },
+  { to: "/risk", icon: ShieldCheck, label: "Human Risk Score", desc: "Your personal cyber score" },
   { to: "/soc", icon: Activity, label: "SOC Dashboard", desc: "Live telemetry & charts" },
   { to: "/qr", icon: QrCode, label: "QR Scanner", desc: "Decode & analyze QR codes" },
   { to: "/screenshot", icon: Eye, label: "Screenshot Scan", desc: "AI vision phishing detection" },
+  { to: "/domain", icon: Globe, label: "DNS / WHOIS", desc: "Domain intelligence" },
+  { to: "/email-headers", icon: Mail, label: "Email Headers", desc: "SPF / DKIM / DMARC analyzer" },
+  { to: "/breach", icon: ShieldAlert, label: "Breach Check", desc: "Pwned password lookup" },
+  { to: "/crypto", icon: Coins, label: "Crypto Scanner", desc: "Wallet address risk" },
+  { to: "/vault", icon: Lock, label: "Encrypted Vault", desc: "AES-256 secret storage" },
   { to: "/community", icon: Users, label: "Community", desc: "Shared threat intelligence" },
   { to: "/settings", icon: Settings, label: "Settings", desc: "Preferences & blockchain" },
 ];

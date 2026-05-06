@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Link2, MessageSquare, FileSearch, Globe, Activity, Cpu, Sparkles, QrCode, Eye, Users } from "lucide-react";
+import { Link2, MessageSquare, FileSearch, Globe, Activity, Cpu, Sparkles, QrCode, Eye, Users, GraduationCap, Target, ShieldCheck, Lock, Mail, ShieldAlert, Coins } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -65,23 +65,49 @@ export default function Home() {
 
       <section>
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-bold flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary" /> Advanced</h3>
+          <h3 className="text-sm font-bold flex items-center gap-2"><GraduationCap className="h-4 w-4 text-primary" /> Learn & Train</h3>
         </div>
         <div className="grid grid-cols-2 gap-3">
           {[
-            { to: "/copilot", icon: Sparkles, title: "AI Copilot", desc: "Chat with security expert" },
-            { to: "/soc", icon: Activity, title: "SOC Dashboard", desc: "Live threat telemetry" },
-            { to: "/qr", icon: QrCode, title: "QR Scanner", desc: "Decode hidden URLs" },
-            { to: "/screenshot", icon: Eye, title: "Screenshot AI", desc: "Vision phishing detect" },
-            { to: "/community", icon: Users, title: "Community", desc: "Shared threat reports" },
+            { to: "/learn", icon: GraduationCap, title: "Learn Mode", desc: "AI-guided lessons & quizzes", grad: "from-fuchsia-500/20 to-purple-500/20" },
+            { to: "/phishing-sim", icon: Target, title: "Phishing Sim", desc: "Spot the scam challenges", grad: "from-rose-500/20 to-orange-500/20" },
+            { to: "/risk", icon: ShieldCheck, title: "Risk Score", desc: "Your cyber posture", grad: "from-emerald-500/20 to-cyan-500/20" },
+            { to: "/copilot", icon: Sparkles, title: "AI Copilot", desc: "Ask anything", grad: "from-blue-500/20 to-indigo-500/20" },
           ].map((c, i) => {
             const Icon = c.icon;
             return (
-              <motion.div key={c.to}
-                initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.04 }}>
-                <Link to={c.to}
-                  className="block glass rounded-2xl p-4 hover:ring-2 hover:ring-primary/50 transition-all">
+              <motion.div key={c.to} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
+                <Link to={c.to} className={`block glass rounded-2xl p-4 hover:ring-2 hover:ring-primary/50 transition-all bg-gradient-to-br ${c.grad}`}>
+                  <Icon className="h-6 w-6 text-primary mb-2" />
+                  <div className="font-semibold text-sm">{c.title}</div>
+                  <div className="text-[11px] text-muted-foreground mt-0.5">{c.desc}</div>
+                </Link>
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section>
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-sm font-bold flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary" /> Advanced Tools</h3>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { to: "/soc", icon: Activity, title: "SOC Dashboard", desc: "Live telemetry" },
+            { to: "/qr", icon: QrCode, title: "QR Scanner", desc: "Decode hidden URLs" },
+            { to: "/screenshot", icon: Eye, title: "Screenshot AI", desc: "Vision phishing" },
+            { to: "/domain", icon: Globe, title: "Domain Intel", desc: "DNS / WHOIS" },
+            { to: "/email-headers", icon: Mail, title: "Email Headers", desc: "SPF / DKIM / DMARC" },
+            { to: "/breach", icon: ShieldAlert, title: "Breach Check", desc: "Password leaks" },
+            { to: "/crypto", icon: Coins, title: "Crypto Scan", desc: "Wallet risk" },
+            { to: "/vault", icon: Lock, title: "Vault", desc: "Encrypted secrets" },
+            { to: "/community", icon: Users, title: "Community", desc: "Threat reports" },
+          ].map((c, i) => {
+            const Icon = c.icon;
+            return (
+              <motion.div key={c.to} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
+                <Link to={c.to} className="block glass rounded-2xl p-4 hover:ring-2 hover:ring-primary/50 transition-all">
                   <Icon className="h-6 w-6 text-accent mb-2" />
                   <div className="font-semibold text-sm">{c.title}</div>
                   <div className="text-[11px] text-muted-foreground mt-0.5">{c.desc}</div>
